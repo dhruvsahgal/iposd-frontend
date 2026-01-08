@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.36.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.24.10",
     "lucide-react": "^0.562.0",
+    "mini-svg-data-uri": "^1.4.4",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

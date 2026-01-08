@@ -4,10 +4,12 @@
   --background: #ffffff;
   --foreground: #1E293B;
   
-  /* Primary Colors */
-  --primary: #006778;
-  --primary-dark: #005566;
+  /* Primary Colors - IP Grow Branding */
+  --primary: #03727d;
+  --primary-dark: #02545d;
   --primary-light: #0891B2;
+  --brand-80: #013d43;
+  --brand-60: #03727d;
   
   /* Accent Colors */
   --accent-success: #059669;
@@ -25,6 +27,21 @@
   --neutral-700: #334155;
   --neutral-800: #1E293B;
   --neutral-900: #0F172A;
+  
+  /* Gradient Animation Colors */
+  --gradient-background-start: rgb(3, 114, 125);
+  --gradient-background-end: rgb(1, 61, 67);
+  --first-color: 3, 114, 125;
+  --second-color: 2, 84, 93;
+  --third-color: 1, 61, 67;
+  --fourth-color: 0, 40, 45;
+  --fifth-color: 3, 150, 165;
+  --pointer-color: 3, 180, 195;
+  --size: 80%;
+  --blending-value: hard-light;
+  
+  /* Teal color for Aceternity */
+  --teal-500: #03727d;
 }
 
 @theme inline {
@@ -113,4 +130,77 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-400);
+}
+
+/* Aceternity UI Animations */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+@keyframes scroll {
+  to {
+    transform: translate(calc(-50% - 0.5rem));
+  }
+}
+
+@keyframes first {
+  0% { transform: translateY(-50%) translateX(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) translateX(-50%) rotate(360deg); }
+}
+
+@keyframes second {
+  0% { transform: translateY(-50%) translateX(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) translateX(-50%) rotate(-360deg); }
+}
+
+@keyframes third {
+  0% { transform: translateY(-50%) translateX(-50%) scale(1); }
+  50% { transform: translateY(-50%) translateX(-50%) scale(1.2); }
+  100% { transform: translateY(-50%) translateX(-50%) scale(1); }
+}
+
+@keyframes fourth {
+  0% { transform: translateY(-50%) translateX(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) translateX(-50%) rotate(360deg); }
+}
+
+@keyframes fifth {
+  0% { transform: translateY(-50%) translateX(-50%) rotate(0deg) scale(1); }
+  50% { transform: translateY(-50%) translateX(-50%) rotate(180deg) scale(1.1); }
+  100% { transform: translateY(-50%) translateX(-50%) rotate(360deg) scale(1); }
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease 0.75s 1 forwards;
+}
+
+.animate-scroll {
+  animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+}
+
+.animate-first {
+  animation: first 10s linear infinite;
+}
+
+.animate-second {
+  animation: second 15s linear infinite;
+}
+
+.animate-third {
+  animation: third 8s ease-in-out infinite;
+}
+
+.animate-fourth {
+  animation: fourth 20s linear infinite;
+}
+
+.animate-fifth {
+  animation: fifth 12s ease-in-out infinite;
 }
