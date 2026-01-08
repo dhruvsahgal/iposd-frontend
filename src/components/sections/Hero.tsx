@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, Sparkles, Shield, Users } from "lucide-react";
 
@@ -41,13 +42,17 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button size="lg" className="group">
-                Start Your IP Assessment
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg">
-                Browse Experts
-              </Button>
+              <Link href="/assessment">
+                <Button size="lg" className="group">
+                  Start Your IP Assessment
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link href="/providers">
+                <Button variant="outline" size="lg">
+                  Browse Experts
+                </Button>
+              </Link>
             </div>
 
             {/* Stats */}
