@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -140,6 +141,7 @@ const questions = [
 ];
 
 export default function AssessmentPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [isComplete, setIsComplete] = useState(false);
@@ -183,7 +185,7 @@ export default function AssessmentPage() {
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setIsComplete(true);
+      router.push("/upload");
     }
   };
 

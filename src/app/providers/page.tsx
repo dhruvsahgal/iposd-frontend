@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -359,7 +360,9 @@ export default function ProvidersPage() {
                         <Button variant="secondary" size="sm">
                           View Profile
                         </Button>
-                        <Button size="sm">Book Consult</Button>
+                        <Link href={`/booking/${provider.id}`}>
+                          <Button size="sm">Book Consult</Button>
+                        </Link>
                       </div>
                     </div>
 

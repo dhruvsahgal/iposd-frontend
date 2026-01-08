@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -386,10 +387,12 @@ export default function ResultsPage() {
                           <Button variant="secondary" size="sm">
                             View Full Profile
                           </Button>
-                          <Button size="sm">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            Book Free Consultation
-                          </Button>
+                          <Link href={`/booking/${provider.id}`}>
+                            <Button size="sm">
+                              <Calendar className="w-4 h-4 mr-2" />
+                              Book Free Consultation
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -404,10 +407,12 @@ export default function ResultsPage() {
               transition={{ delay: 0.5 }}
               className="text-center pt-4"
             >
-              <Button variant="outline">
-                Show More Matches
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+              <Link href="/providers">
+                <Button variant="outline">
+                  Show More Matches
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </div>

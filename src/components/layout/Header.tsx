@@ -2,20 +2,27 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User, Settings } from "lucide-react";
 
 const navigation = [
-  { name: "Services", href: "/services", hasDropdown: true },
+  { name: "Services", href: "/services" },
   { name: "Find Experts", href: "/providers" },
-  { name: "Resources", href: "/resources", hasDropdown: true },
+  { name: "Resources", href: "/resources" },
   { name: "About", href: "/about" },
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Hide header on admin page
+  if (pathname === "/admin") {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,17 +73,24 @@ export function Header() {
                 )}
               >
                 {item.name}
-                {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
               </Link>
             ))}
           </div>
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Button variant="ghost" size="sm">
-              Sign In
-            </Button>
-            <Button size="sm">Get Started</Button>
+            <Link href="/admin" className="text-sm text-[var(--neutral-500)] hover:text-[var(--neutral-700)]">
+              <Settings className="w-4 h-4" />
+            </Link>
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                <User className="w-4 h-4 mr-1" />
+                Dashboard
+              </Button>
+            </Link>
+            <Link href="/assessment">
+              <Button size="sm">Get Started</Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
