@@ -199,10 +199,19 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center"
-                      style={{ backgroundColor: `color-mix(in srgb, ${stat.color} 20%, transparent)` }}
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                        stat.color === "var(--ip-orange)" ? "bg-orange-500/20" :
+                        stat.color === "var(--ip-teal)" ? "bg-teal-500/20" :
+                        stat.color === "var(--ip-light-cyan)" ? "bg-cyan-500/20" :
+                        "bg-yellow-500/20"
+                      }`}
                     >
-                      <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
+                      <stat.icon className={`w-6 h-6 ${
+                        stat.color === "var(--ip-orange)" ? "text-orange-500" :
+                        stat.color === "var(--ip-teal)" ? "text-teal-500" :
+                        stat.color === "var(--ip-light-cyan)" ? "text-cyan-500" :
+                        "text-yellow-500"
+                      }`} />
                     </div>
                     <div
                       className={`flex items-center gap-1 text-sm font-medium ${
@@ -235,9 +244,13 @@ export default function AdminDashboard() {
                 {pipelineData.map((item, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center gap-2">
                     <div
-                      className="w-full rounded-t-lg transition-all duration-500 hover:opacity-80"
+                      className={`w-full rounded-t-lg transition-all duration-500 hover:opacity-80 ${
+                        item.color === "var(--ip-orange)" ? "bg-orange-500" :
+                        item.color === "var(--ip-yellow)" ? "bg-yellow-500" :
+                        item.color === "var(--ip-teal)" ? "bg-teal-500" :
+                        "bg-cyan-500"
+                      }`}
                       style={{
-                        backgroundColor: item.color,
                         height: `${(item.count / 160) * 100}%`,
                         minHeight: "20px",
                       }}
@@ -325,11 +338,15 @@ export default function AdminDashboard() {
               {pipelineData.map((stage, index) => (
                 <div
                   key={index}
-                  className="glass rounded-2xl p-6 border border-foreground/10 hover:border-[var(--ip-teal)]/30 transition-all"
+                  className="glass rounded-2xl p-6 border border-foreground/10 hover:border-teal-500/30 transition-all"
                 >
                   <div
-                    className="w-full h-2 rounded-full mb-4"
-                    style={{ backgroundColor: stage.color }}
+                    className={`w-full h-2 rounded-full mb-4 ${
+                      stage.color === "var(--ip-orange)" ? "bg-orange-500" :
+                      stage.color === "var(--ip-yellow)" ? "bg-yellow-500" :
+                      stage.color === "var(--ip-teal)" ? "bg-teal-500" :
+                      "bg-cyan-500"
+                    }`}
                   />
                   <div className="text-4xl font-bold text-foreground mb-2">{stage.count}</div>
                   <div className="text-sm text-foreground/60">{stage.stage}</div>
