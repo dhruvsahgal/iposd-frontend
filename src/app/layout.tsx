@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { Navigation } from "@/components/layout/Navigation";
+import { FooterSimple } from "@/components/layout/FooterSimple";
 import { FlowProvider } from "@/context/FlowContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: "IP Grow | Protect Your Innovation with Confidence",
+  title: "IP Grow | Protect Your Innovation",
   description:
-    "AI-powered IP analysis and expert matching to help you navigate your intellectual property journey. From idea to protection in days, not months.",
+    "AI-powered IP analysis and expert matching to help you navigate your intellectual property journey. From idea to protection.",
 };
 
 export default function RootLayout({
@@ -19,12 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="dark">
+      <body className={`${geist.variable} ${geistMono.variable} font-sans`}>
         <FlowProvider>
-          <Header />
+          <Navigation />
           <main>{children}</main>
-          <Footer />
+          <FooterSimple />
         </FlowProvider>
       </body>
     </html>

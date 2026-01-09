@@ -1,357 +1,449 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import {
-  BarChart3,
-  Phone,
   Users,
-  Target,
-  LogOut,
-  AlertCircle,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
   TrendingUp,
-  ExternalLink,
+  ArrowUpRight,
+  ArrowDownRight,
+  FileText,
+  Building2,
+  Star,
+  Timer,
+  Activity,
+  BarChart3,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-const tabs = [
-  { id: "overview", label: "Overview", icon: BarChart3 },
-  { id: "followup", label: "Follow-ups", icon: Phone },
-  { id: "providers", label: "Providers", icon: Users },
-  { id: "outcomes", label: "Outcomes", icon: Target },
+// Mock data for the dashboard
+const overviewStats = [
+  {
+    title: "Pending Requests",
+    value: 47,
+    change: +12,
+    trend: "up",
+    icon: FileText,
+    color: "var(--ip-orange)",
+  },
+  {
+    title: "Avg. Match Time",
+    value: "4.2h",
+    change: -18,
+    trend: "down",
+    icon: Clock,
+    color: "var(--ip-teal)",
+  },
+  {
+    title: "Provider Response",
+    value: "94%",
+    change: +3,
+    trend: "up",
+    icon: CheckCircle,
+    color: "var(--ip-light-cyan)",
+  },
+  {
+    title: "Satisfaction Score",
+    value: "4.8",
+    change: +0.2,
+    trend: "up",
+    icon: Star,
+    color: "var(--ip-yellow)",
+  },
 ];
 
-const metrics = [
-  { label: "Active Users Today", value: "847", change: "+12%" },
-  { label: "Analyses This Week", value: "234", change: "+28%" },
-  { label: "Consultations Scheduled", value: "47", change: "+15%" },
-  { label: "Matches This Month", value: "312", change: "+8%" },
+const pipelineData = [
+  { stage: "New Requests", count: 23, color: "var(--ip-orange)" },
+  { stage: "Matching", count: 15, color: "var(--ip-yellow)" },
+  { stage: "In Progress", count: 42, color: "var(--ip-teal)" },
+  { stage: "Completed", count: 156, color: "var(--ip-light-cyan)" },
 ];
 
-const funnelData = [
-  { stage: "Visitors", count: 12450, percentage: 100 },
-  { stage: "Assessment", count: 6847, percentage: 55 },
-  { stage: "Analysis", count: 3421, percentage: 27 },
-  { stage: "Matched", count: 1892, percentage: 15 },
-  { stage: "Booked", count: 847, percentage: 7 },
+const recentRequests = [
+  {
+    id: "REQ-2024-001",
+    type: "Patent Search",
+    company: "TechStart Pte Ltd",
+    provider: "IP Solutions SG",
+    status: "In Progress",
+    sla: "On Track",
+    timeElapsed: "2.5h",
+  },
+  {
+    id: "REQ-2024-002",
+    type: "Trademark Filing",
+    company: "GreenBites Co",
+    provider: "Pending Match",
+    status: "Matching",
+    sla: "Warning",
+    timeElapsed: "5.2h",
+  },
+  {
+    id: "REQ-2024-003",
+    type: "Patent Filing",
+    company: "AI Dynamics",
+    provider: "PatentPro Asia",
+    status: "Completed",
+    sla: "Met",
+    timeElapsed: "18h",
+  },
+  {
+    id: "REQ-2024-004",
+    type: "Design Registration",
+    company: "Fashion Forward",
+    provider: "Pending Match",
+    status: "New",
+    sla: "On Track",
+    timeElapsed: "0.5h",
+  },
+  {
+    id: "REQ-2024-005",
+    type: "IP Strategy",
+    company: "MedTech SG",
+    provider: "KPMG IP Advisory",
+    status: "In Progress",
+    sla: "At Risk",
+    timeElapsed: "24h",
+  },
 ];
 
-const followUpQueue = [
-  { id: 1, name: "Sarah Tan", company: "HealthPredict Pte Ltd", provider: "Drew & Napier", type: "Patent", due: "Jan 24", priority: "high", days: 14 },
-  { id: 2, name: "Michael Lim", company: "PrecisionTech Engineering", provider: "Bird & Bird", type: "Trademark", due: "Jan 25", priority: "medium", days: 11 },
-  { id: 3, name: "David Ng", company: "SmartHome Solutions", provider: "Exy IP", type: "Patent", due: "Jan 12", priority: "high", days: 24 },
-  { id: 4, name: "Lisa Chen", company: "EcoPackaging Pte Ltd", provider: "Spruson & Ferguson", type: "Patent", due: "Jan 7", priority: "high", days: 29 },
-  { id: 5, name: "Ahmad Rahman", company: "FinEdge Technologies", provider: "Allen & Gledhill", type: "Patent", due: "Jan 17", priority: "medium", days: 19 },
+const topProviders = [
+  {
+    name: "IP Solutions SG",
+    rating: 4.9,
+    responseTime: "2.1h",
+    completionRate: "98%",
+    activeJobs: 12,
+  },
+  {
+    name: "PatentPro Asia",
+    rating: 4.8,
+    responseTime: "3.2h",
+    completionRate: "96%",
+    activeJobs: 8,
+  },
+  {
+    name: "KPMG IP Advisory",
+    rating: 4.7,
+    responseTime: "4.5h",
+    completionRate: "99%",
+    activeJobs: 5,
+  },
+  {
+    name: "Drew & Napier",
+    rating: 4.9,
+    responseTime: "2.8h",
+    completionRate: "97%",
+    activeJobs: 15,
+  },
 ];
 
-const providerRankings = [
-  { rank: 1, name: "Drew & Napier", matches: 47, filings: 12, conversion: 32 },
-  { rank: 2, name: "Donaldson & Burkinshaw", matches: 42, filings: 9, conversion: 26 },
-  { rank: 3, name: "Exy IP", matches: 31, filings: 7, conversion: 29 },
-  { rank: 4, name: "Bird & Bird", matches: 23, filings: 5, conversion: 26 },
-  { rank: 5, name: "Marks & Clerk", matches: 22, filings: 4, conversion: 24 },
+const alerts = [
+  { type: "warning", message: "3 requests approaching SLA breach", time: "5 min ago" },
+  { type: "info", message: "New provider onboarded: LegalTech Partners", time: "1 hour ago" },
+  { type: "error", message: "Provider 'Quick IP' response rate dropped to 75%", time: "2 hours ago" },
 ];
 
-const filingsByType = [
-  { type: "Trademark", count: 42, percentage: 47 },
-  { type: "Patent", count: 34, percentage: 38 },
-  { type: "Design", count: 8, percentage: 9 },
-  { type: "Other", count: 5, percentage: 6 },
-];
-
-export default function AdminPage() {
+export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Admin Header */}
-      <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-xl text-white">
-              <span className="text-2xl">IP</span> Grow
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-              Operations
-            </span>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-foreground/10 bg-card/50 backdrop-blur-xl sticky top-0 z-40">
+        <div className="max-w-[1400px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold gradient-text">IP Grow Admin</h1>
+              <p className="text-sm text-foreground/60">Operations Dashboard</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm font-medium text-foreground">Live Data</p>
+                <p className="text-xs text-foreground/50">Last updated: Just now</p>
+              </div>
+              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+            </div>
           </div>
-          <Link
-            href="/"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            <LogOut className="w-4 h-4" /> Exit Admin
-          </Link>
         </div>
       </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-48 bg-slate-800 min-h-[calc(100vh-57px)] p-3">
-          <nav className="space-y-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left text-sm transition-all",
-                  activeTab === tab.id
-                    ? "bg-teal-600 text-white"
-                    : "text-slate-400 hover:bg-slate-700 hover:text-white"
-                )}
-              >
-                <tab.icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          {/* Overview Tab */}
-          {activeTab === "overview" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-6"
+      <div className="max-w-[1400px] mx-auto px-6 py-8">
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {["overview", "pipeline", "providers", "alerts"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
+                activeTab === tab
+                  ? "bg-[var(--ip-teal)] text-white shadow-lg shadow-[var(--ip-teal)]/30"
+                  : "glass text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+              }`}
             >
-              <div>
-                <h1 className="text-xl font-bold text-white mb-1">Operations Dashboard</h1>
-                <p className="text-slate-400 text-sm">Last updated 2 minutes ago</p>
-              </div>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
 
-              {/* Metrics */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {metrics.map((metric) => (
-                  <div key={metric.label} className="bg-slate-800 rounded-xl p-4">
-                    <div className="text-slate-400 text-xs mb-1">{metric.label}</div>
-                    <div className="flex items-end gap-2">
-                      <span className="text-2xl font-bold text-white">{metric.value}</span>
-                      <span className="text-emerald-400 text-xs mb-1">{metric.change}</span>
+        {/* Overview Tab */}
+        {activeTab === "overview" && (
+          <div className="space-y-8">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {overviewStats.map((stat, index) => (
+                <div
+                  key={index}
+                  className="glass rounded-2xl p-6 border border-foreground/10 hover:border-[var(--ip-teal)]/30 transition-all duration-300 group"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center"
+                      style={{ backgroundColor: `color-mix(in srgb, ${stat.color} 20%, transparent)` }}
+                    >
+                      <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
                     </div>
+                    <div
+                      className={`flex items-center gap-1 text-sm font-medium ${
+                        stat.trend === "up" ? "text-green-400" : "text-red-400"
+                      }`}
+                    >
+                      {stat.trend === "up" ? (
+                        <ArrowUpRight className="w-4 h-4" />
+                      ) : (
+                        <ArrowDownRight className="w-4 h-4" />
+                      )}
+                      {Math.abs(stat.change)}%
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-foreground mb-1 group-hover:text-[var(--ip-teal)] transition-colors">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-foreground/60">{stat.title}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pipeline Funnel */}
+            <div className="glass rounded-2xl p-6 border border-foreground/10">
+              <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-[var(--ip-teal)]" />
+                Request Pipeline
+              </h3>
+              <div className="flex items-end justify-between gap-4 h-48">
+                {pipelineData.map((item, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                    <div
+                      className="w-full rounded-t-lg transition-all duration-500 hover:opacity-80"
+                      style={{
+                        backgroundColor: item.color,
+                        height: `${(item.count / 160) * 100}%`,
+                        minHeight: "20px",
+                      }}
+                    />
+                    <div className="text-2xl font-bold text-foreground">{item.count}</div>
+                    <div className="text-xs text-foreground/60 text-center">{item.stage}</div>
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Funnel */}
-              <div className="bg-slate-800 rounded-xl p-5">
-                <h2 className="text-sm font-semibold text-white mb-4">
-                  Conversion Funnel (Last 30 Days)
-                </h2>
-                <div className="space-y-3">
-                  {funnelData.map((item) => (
-                    <div key={item.stage} className="flex items-center gap-3">
-                      <div className="w-20 text-xs text-slate-300">{item.stage}</div>
-                      <div className="flex-1 h-6 bg-slate-700 rounded overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-teal-600 to-teal-500 rounded flex items-center px-2"
-                          style={{ width: `${item.percentage}%` }}
-                        >
-                          {item.percentage > 15 && (
-                            <span className="text-xs text-white font-medium">
-                              {item.count.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="w-12 text-right text-xs text-slate-400">
-                        {item.percentage}%
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Insight */}
-                <div className="mt-4 p-3 bg-amber-900/30 border border-amber-700/50 rounded-lg flex gap-2">
-                  <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <div className="text-amber-200 text-xs font-medium">High drop-off detected</div>
-                    <div className="text-amber-300/70 text-xs">
-                      55% drop at Provider Match stage. Consider adding auto-suggestions.
-                    </div>
-                  </div>
-                </div>
+            {/* Recent Requests Table */}
+            <div className="glass rounded-2xl border border-foreground/10 overflow-hidden">
+              <div className="p-6 border-b border-foreground/10">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[var(--ip-teal)]" />
+                  Recent Requests
+                </h3>
               </div>
-            </motion.div>
-          )}
-
-          {/* Follow-ups Tab */}
-          {activeTab === "followup" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-6"
-            >
-              <div>
-                <h1 className="text-xl font-bold text-white mb-1">Follow-up Queue</h1>
-                <p className="text-slate-400 text-sm">{followUpQueue.length} items pending</p>
-              </div>
-
-              <div className="space-y-3">
-                {followUpQueue.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-slate-800 rounded-xl p-4 flex items-start justify-between gap-4"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          "w-2 h-2 rounded-full mt-2",
-                          item.priority === "high" ? "bg-red-500" : "bg-amber-500"
-                        )}
-                      />
-                      <div>
-                        <div className="text-white font-medium">{item.name}</div>
-                        <div className="text-slate-400 text-sm">{item.company}</div>
-                        <div className="flex gap-3 mt-1 text-xs text-slate-500">
-                          <span>{item.provider}</span>
-                          <span>{item.type}</span>
-                          <span>{item.days} days since consultation</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-slate-400 text-xs mb-2">Due: {item.due}</div>
-                      <div className="flex gap-2">
-                        <button className="text-xs px-3 py-1.5 bg-slate-700 text-slate-300 rounded hover:bg-slate-600">
-                          Call
-                        </button>
-                        <button className="text-xs px-3 py-1.5 bg-teal-600 text-white rounded hover:bg-teal-500">
-                          Survey
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Providers Tab */}
-          {activeTab === "providers" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-6"
-            >
-              <div>
-                <h1 className="text-xl font-bold text-white mb-1">Provider Performance</h1>
-                <p className="text-slate-400 text-sm">January 2026</p>
-              </div>
-
-              <div className="bg-slate-800 rounded-xl overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-700">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-foreground/5">
                     <tr>
-                      <th className="text-left text-slate-300 font-medium px-4 py-3">#</th>
-                      <th className="text-left text-slate-300 font-medium px-4 py-3">Provider</th>
-                      <th className="text-right text-slate-300 font-medium px-4 py-3">Matches</th>
-                      <th className="text-right text-slate-300 font-medium px-4 py-3">Filings</th>
-                      <th className="text-right text-slate-300 font-medium px-4 py-3">Conv %</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">ID</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Type</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Company</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Provider</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Status</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">SLA</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Time</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {providerRankings.map((provider) => (
-                      <tr key={provider.rank} className="border-t border-slate-700">
-                        <td className="px-4 py-3 text-slate-400">{provider.rank}</td>
-                        <td className="px-4 py-3 text-white font-medium">{provider.name}</td>
-                        <td className="px-4 py-3 text-right text-slate-300">{provider.matches}</td>
-                        <td className="px-4 py-3 text-right text-slate-300">{provider.filings}</td>
-                        <td className="px-4 py-3 text-right text-emerald-400 font-medium">
-                          {provider.conversion}%
+                    {recentRequests.map((request, index) => (
+                      <tr
+                        key={index}
+                        className="border-t border-foreground/5 hover:bg-foreground/5 transition-colors"
+                      >
+                        <td className="p-4 text-sm font-mono text-[var(--ip-teal)]">{request.id}</td>
+                        <td className="p-4 text-sm text-foreground">{request.type}</td>
+                        <td className="p-4 text-sm text-foreground">{request.company}</td>
+                        <td className="p-4 text-sm text-foreground/70">{request.provider}</td>
+                        <td className="p-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              request.status === "Completed"
+                                ? "bg-green-500/20 text-green-400"
+                                : request.status === "In Progress"
+                                ? "bg-[var(--ip-teal)]/20 text-[var(--ip-teal)]"
+                                : request.status === "Matching"
+                                ? "bg-[var(--ip-yellow)]/20 text-[var(--ip-yellow)]"
+                                : "bg-[var(--ip-orange)]/20 text-[var(--ip-orange)]"
+                            }`}
+                          >
+                            {request.status}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              request.sla === "Met" || request.sla === "On Track"
+                                ? "bg-green-500/20 text-green-400"
+                                : request.sla === "Warning"
+                                ? "bg-[var(--ip-yellow)]/20 text-[var(--ip-yellow)]"
+                                : "bg-red-500/20 text-red-400"
+                            }`}
+                          >
+                            {request.sla}
+                          </span>
+                        </td>
+                        <td className="p-4 text-sm text-foreground/60">{request.timeElapsed}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pipeline Tab */}
+        {activeTab === "pipeline" && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {pipelineData.map((stage, index) => (
+                <div
+                  key={index}
+                  className="glass rounded-2xl p-6 border border-foreground/10 hover:border-[var(--ip-teal)]/30 transition-all"
+                >
+                  <div
+                    className="w-full h-2 rounded-full mb-4"
+                    style={{ backgroundColor: stage.color }}
+                  />
+                  <div className="text-4xl font-bold text-foreground mb-2">{stage.count}</div>
+                  <div className="text-sm text-foreground/60">{stage.stage}</div>
+                </div>
+              ))}
+            </div>
+            <div className="glass rounded-2xl p-6 border border-foreground/10">
+              <h3 className="text-lg font-bold text-foreground mb-4">Turnaround Time by IP Type</h3>
+              <div className="space-y-4">
+                {[
+                  { type: "Patent Search", avg: "6.2h", target: "8h", status: "good" },
+                  { type: "Trademark Filing", avg: "12.5h", target: "12h", status: "warning" },
+                  { type: "Patent Filing", avg: "24h", target: "48h", status: "good" },
+                  { type: "Design Registration", avg: "8h", target: "8h", status: "good" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 rounded-xl bg-foreground/5">
+                    <span className="text-foreground">{item.type}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-foreground/60">Avg: {item.avg}</span>
+                      <span className="text-foreground/60">Target: {item.target}</span>
+                      <span
+                        className={`w-3 h-3 rounded-full ${
+                          item.status === "good" ? "bg-green-500" : "bg-[var(--ip-yellow)]"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Providers Tab */}
+        {activeTab === "providers" && (
+          <div className="space-y-8">
+            <div className="glass rounded-2xl border border-foreground/10 overflow-hidden">
+              <div className="p-6 border-b border-foreground/10">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[var(--ip-teal)]" />
+                  Provider Performance
+                </h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-foreground/5">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Provider</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Rating</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Response Time</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Completion Rate</th>
+                      <th className="text-left p-4 text-sm font-semibold text-foreground/70">Active Jobs</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topProviders.map((provider, index) => (
+                      <tr
+                        key={index}
+                        className="border-t border-foreground/5 hover:bg-foreground/5 transition-colors"
+                      >
+                        <td className="p-4 text-sm font-medium text-foreground">{provider.name}</td>
+                        <td className="p-4">
+                          <span className="flex items-center gap-1 text-[var(--ip-yellow)]">
+                            <Star className="w-4 h-4 fill-current" />
+                            {provider.rating}
+                          </span>
+                        </td>
+                        <td className="p-4 text-sm text-foreground">{provider.responseTime}</td>
+                        <td className="p-4 text-sm text-foreground">{provider.completionRate}</td>
+                        <td className="p-4">
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--ip-teal)]/20 text-[var(--ip-teal)]">
+                            {provider.activeJobs}
+                          </span>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
 
-              <div className="bg-slate-800 rounded-xl p-5">
-                <h3 className="text-white font-medium text-sm mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  Top Performer: Drew & Napier (32% conversion)
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  47 matches → 38 consultations → 12 filings confirmed this month
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Outcomes Tab */}
-          {activeTab === "outcomes" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-6"
-            >
-              <div>
-                <h1 className="text-xl font-bold text-white mb-1">Outcome Tracking</h1>
-                <p className="text-slate-400 text-sm">Q4 2025 + January 2026</p>
-              </div>
-
-              {/* Summary Cards */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-800 rounded-xl p-4">
-                  <div className="text-slate-400 text-xs mb-1">Total Consultations</div>
-                  <div className="text-2xl font-bold text-white">312</div>
-                </div>
-                <div className="bg-slate-800 rounded-xl p-4">
-                  <div className="text-slate-400 text-xs mb-1">Filings Confirmed</div>
-                  <div className="text-2xl font-bold text-emerald-400">89</div>
-                </div>
-                <div className="bg-slate-800 rounded-xl p-4">
-                  <div className="text-slate-400 text-xs mb-1">Satisfaction Score</div>
-                  <div className="text-2xl font-bold text-amber-400">4.3/5</div>
+        {/* Alerts Tab */}
+        {activeTab === "alerts" && (
+          <div className="space-y-4">
+            {alerts.map((alert, index) => (
+              <div
+                key={index}
+                className={`glass rounded-xl p-4 border flex items-start gap-4 ${
+                  alert.type === "error"
+                    ? "border-red-500/30 bg-red-500/5"
+                    : alert.type === "warning"
+                    ? "border-[var(--ip-yellow)]/30 bg-[var(--ip-yellow)]/5"
+                    : "border-[var(--ip-teal)]/30 bg-[var(--ip-teal)]/5"
+                }`}
+              >
+                <AlertTriangle
+                  className={`w-5 h-5 mt-0.5 ${
+                    alert.type === "error"
+                      ? "text-red-400"
+                      : alert.type === "warning"
+                      ? "text-[var(--ip-yellow)]"
+                      : "text-[var(--ip-teal)]"
+                  }`}
+                />
+                <div className="flex-1">
+                  <p className="text-foreground">{alert.message}</p>
+                  <p className="text-sm text-foreground/50 mt-1">{alert.time}</p>
                 </div>
               </div>
-
-              {/* Filings by Type */}
-              <div className="bg-slate-800 rounded-xl p-5">
-                <h3 className="text-white font-medium text-sm mb-4">Filings by IP Type</h3>
-                <div className="space-y-3">
-                  {filingsByType.map((item) => (
-                    <div key={item.type} className="flex items-center gap-3">
-                      <div className="w-20 text-sm text-slate-300">{item.type}</div>
-                      <div className="flex-1 h-5 bg-slate-700 rounded overflow-hidden">
-                        <div
-                          className="h-full bg-teal-600 rounded"
-                          style={{ width: `${item.percentage}%` }}
-                        />
-                      </div>
-                      <div className="w-10 text-right text-sm text-slate-400">{item.count}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Satisfaction Distribution */}
-              <div className="bg-slate-800 rounded-xl p-5">
-                <h3 className="text-white font-medium text-sm mb-4">
-                  Satisfaction Distribution (142 responses)
-                </h3>
-                <div className="flex items-end gap-2 h-24">
-                  {[
-                    { stars: 5, count: 68 },
-                    { stars: 4, count: 45 },
-                    { stars: 3, count: 20 },
-                    { stars: 2, count: 7 },
-                    { stars: 1, count: 2 },
-                  ].map((item) => (
-                    <div key={item.stars} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full bg-teal-600 rounded-t"
-                        style={{ height: `${(item.count / 68) * 100}%` }}
-                      />
-                      <span className="text-xs text-slate-400">{item.stars}★</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </main>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
